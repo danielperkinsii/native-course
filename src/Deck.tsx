@@ -1,8 +1,18 @@
-import React, { useRef } from "react";
+import React, { JSX, useRef } from "react";
 import { View, Animated, Text, StyleSheet, PanResponder } from "react-native";
 import { Card, Button } from "@rneui/themed";
 
-const Deck = ({ data, renderCard }: any) => {
+interface CardData {
+  text: string;
+  uri: string;
+}
+
+interface DeckProps {
+  data: CardData[];
+  renderCard: (item: CardData) => JSX.Element;
+}
+
+const Deck = ({ data, renderCard }: DeckProps) => {
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -15,9 +25,31 @@ const Deck = ({ data, renderCard }: any) => {
 
   const position = useRef(new Animated.ValueXY()).current;
 
-  return (
-    <Animated.View style={position.getLayout()} {...panResponder.panHandlers}>
-      {data.map((item: any, i: number) => (
+  const moveCard = (index: number) => {
+    if (index === 0) {
+      // do something
+    }
+  };
+
+  return data.map((item: any, index: number) =>
+    index === 0 ? (
+      <Animated.View style={position.getLayout()} {...panResponder.panHandlers}>
+        <Card>
+          <Card.Title>{item.text}</Card.Title>
+          <Card.Image
+            style={styles.avatar}
+            resizeMode="cover"
+            source={{ uri: item.uri }}
+          />
+          <Button
+            icon={{ name: "code" }}
+            style={styles.button}
+            title={"view now!"}
+          ></Button>
+        </Card>
+      </Animated.View>
+    ) : (
+      <View>
         <Card>
           <Card.Title>{item.text}</Card.Title>
           <Card.Image
@@ -32,8 +64,8 @@ const Deck = ({ data, renderCard }: any) => {
             title={"view now!"}
           ></Button>
         </Card>
-      ))}
-    </Animated.View>
+      </View>
+    )
   );
 };
 
