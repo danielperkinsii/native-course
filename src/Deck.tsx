@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View, Animated, Text, StyleSheet, PanResponder } from "react-native";
 import { Card, Button } from "@rneui/themed";
 
 const Deck = ({ data, renderCard }: any) => {
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (event, gesture) => {
+        position.setValue({ x: gesture.dx, y: gesture.dy });
+      },
+      onPanResponderRelease: () => {},
+    })
+  ).current;
+
+  const position = useRef(new Animated.ValueXY()).current;
+
   return (
-    <View>
+    <Animated.View style={position.getLayout()} {...panResponder.panHandlers}>
       {data.map((item: any, i: number) => (
         <Card>
           <Card.Title>{item.text}</Card.Title>
@@ -13,6 +25,7 @@ const Deck = ({ data, renderCard }: any) => {
             resizeMode="cover"
             source={{ uri: item.uri }}
           />
+
           <Button
             icon={{ name: "code" }}
             style={styles.button}
@@ -20,7 +33,7 @@ const Deck = ({ data, renderCard }: any) => {
           ></Button>
         </Card>
       ))}
-    </View>
+    </Animated.View>
   );
 };
 
